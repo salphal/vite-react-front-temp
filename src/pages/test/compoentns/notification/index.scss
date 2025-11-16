@@ -1,0 +1,37 @@
+.workspace-notification {
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-flow: row nowrap;
+  }
+
+  &__content {
+    display: flex;
+    justify-content: flex-start;
+    align-items: stretch;
+    flex-flow: column nowrap;
+  }
+
+  &__foter {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    flex-flow: row nowrap;
+  }
+
+  &__title {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-flow: row nowrap;
+  }
+
+  &__icon-status {
+    margin-right: 8px;
+  }
+
+  &__icon-close {
+    cursor: pointer;
+  }
+}
