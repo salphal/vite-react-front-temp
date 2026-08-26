@@ -1,14 +1,16 @@
 import LanguageSwitcher from '@src/components/language-switcher';
 import ThemeSwitcher from '@src/components/theme-switcher';
+import useDeviceType from '@src/hook/useDeviceType';
+import LayoutAsideMenu from '@src/layout/components/aside-menu';
 import HeaderLogo from '@src/layout/components/header/components/logo.tsx';
 import HeaderSearch from '@src/layout/components/header/components/search.tsx';
 import { setLocale } from '@src/store/language';
 import { setThemeStore } from '@src/store/theme';
 import i18n from 'i18next';
-import React, { ReactNode, Ref } from 'react';
+import React, { ReactNode, Ref, useState } from 'react';
 
-import { useBreakpoint } from '@ant-design/pro-components';
-import { Layout as AntdLayout } from 'antd';
+import { MenuOutlined } from '@ant-design/icons';
+import { Layout as AntdLayout, Button, Drawer } from 'antd';
 
 import classNames from 'classnames';
 
@@ -24,7 +26,8 @@ const LayoutHeader: React.ForwardRefRenderFunction<LayoutHeaderRef, LayoutHeader
   props: LayoutHeaderProps,
   ref: Ref<LayoutHeaderRef | HTMLDivElement>,
 ) => {
-  const screens = useBreakpoint();
+  const { isMobile, isPad, isPc } = useDeviceType();
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   useImperativeHandle(ref, () => ({}));
 
@@ -40,36 +43,55 @@ const LayoutHeader: React.ForwardRefRenderFunction<LayoutHeaderRef, LayoutHeader
 
   return (
     <Header className={classNames([['layout-header']])}>
-      {screens && (
-        <Row justify={'space-between'} align={'middle'} wrap={false}>
-          {['xl', 'xxl', 'md', 'lg'].includes(screens) && (
-            <>
-              <Col span={14}>
-                <Flex justify={'start'} align={'center'} wrap={false}>
-                  <HeaderLogo />
-                  <HeaderSearch />
-                </Flex>
-              </Col>
-              <Col span={10}>
-                <Flex justify={'end'} align={'center'} wrap={false}>
-                  <Space align={'center'} split={<Divider type="vertical" />}>
-                    <ThemeSwitcher onChange={themeOnChange} />
-                    <LanguageSwitcher onChange={languageOnChange} />
-                    {/*<HeaderGithub />*/}
-                    {/*<Avatar size={32} icon={<UserOutlined />} />*/}
-                  </Space>
-                </Flex>
-              </Col>
-            </>
-          )}
-          {['xs', 'sm'].includes(screens) && (
-            <>
-              <Col span={12}>left</Col>
-              <Col span={12}>right</Col>
-            </>
-          )}
-        </Row>
-      )}
+      <Row justify={'space-between'} align={'middle'} wrap={isMobile || isPad}>
+        {isPc && (
+          <>
+            <Col span={14}>
+              <Flex justify={'start'} align={'center'} wrap={false}>
+                <HeaderLogo />
+                <HeaderSearch />
+              </Flex>
+            </Col>
+            <Col span={10}>
+              <Flex justify={'end'} align={'center'} wrap={false}>
+                <Space align={'center'} split={<Divider type="vertical" />}>
+                  <ThemeSwitcher onChange={themeOnChange} />
+                  <LanguageSwitcher onChange={languageOnChange} />
+                </Space>
+              </Flex>
+            </Col>
+          </>
+        )}
+        {isMobile && (
+          <Col span={24} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <Flex align={'center'}>
+              <Button
+                type="text"
+                icon={<MenuOutlined />}
+                onClick={() => setDrawerOpen(true)}
+                style={{ fontSize: 18 }}
+              />
+              <HeaderLogo />
+            </Flex>
+            <Flex justify={'end'} align={'middle'}>
+              <Space>
+                <ThemeSwitcher onChange={themeOnChange} />
+                <LanguageSwitcher onChange={languageOnChange} />
+              </Space>
+            </Flex>
+          </Col>
+        )}
+      </Row>
+      <Drawer
+        title="Menu"
+        placement="left"
+        onClose={() => setDrawerOpen(false)}
+        open={drawerOpen}
+        width={240}
+        styles={{ body: { padding: 0 } }}
+      >
+        <LayoutAsideMenu />
+      </Drawer>
     </Header>
   );
 };

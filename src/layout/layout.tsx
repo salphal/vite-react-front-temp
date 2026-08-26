@@ -1,7 +1,7 @@
+import useDeviceType from '@src/hook/useDeviceType';
 import LayoutHeader from '@src/layout/components/header';
 import React from 'react';
 
-import { useBreakpoint } from '@ant-design/pro-components';
 import { Layout } from 'antd';
 
 import styles from './index.module.scss';
@@ -21,7 +21,7 @@ const LayoutPlus: React.FC<LayoutProps> = (props: LayoutProps) => {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
-  const screens = useBreakpoint() ?? '';
+  const { isMobile, isPad, isPc } = useDeviceType();
 
   const [collapsed, setCollapsed] = useState(false);
 
@@ -33,17 +33,15 @@ const LayoutPlus: React.FC<LayoutProps> = (props: LayoutProps) => {
         components: {
           Layout: {
             headerPadding: '0 24px',
-            // headerBg: mode === 'light' ? '#fff' : '#000',
           },
         },
       }}
     >
-      <Layout className={styles['layout-plus']} hasSider={screens === 'xs'}>
-        {/*screens: {screens} <br />*/}
+      <Layout className={styles['layout-plus']} hasSider={isMobile}>
         <LayoutHeader />
         <Layout className={styles['layout-plus__content']}>
           <Layout>
-            {['xl', 'xxl', 'md', 'lg'].includes(screens) && (
+            {(isPc || isPad) && (
               <Layout.Sider>
                 <LayoutAsideMenu />
               </Layout.Sider>
